@@ -19,7 +19,7 @@ Flags:
 
 The command is normally executed at the console, however, there is a permission requirement in case it needs to be accessed remotely. The permission required is:
 
-ResourceManager.allow
+ResourceList.allow
 
 ####Future#
 
