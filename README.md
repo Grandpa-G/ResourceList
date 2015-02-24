@@ -1,15 +1,15 @@
-# Resource Manager
+# Resource List
 
 A simple plugin designed to give some information about the current plugins and potential resources (plugins) available on the TShock.co website in the Resource folder.
 
 ####Getting Started#
 
-The file ResourceManager.dll must be manually copied into the server's TShock ServerPlugins folder. A restart of the server will allow the new .dll file to be recognized.
+The file ResourceList.dll must be manually copied into the server's TShock ServerPlugins folder. A restart of the server will allow the new .dll file to be recognized.
 
 ####Usage#
 
-The command is invoked by /resourcemanager or /rm. The options are:
-Syntax: /resourcemanager [-verbose -sort {a|t} -help -author {name}]
+The command is invoked by /resourcelist or /rl. The options are:
+Syntax: /resourcelist [-verbose -sort {a|t} -help -author {name}]
 
 Flags:
    -sort     Sort by a (author), t(title)
