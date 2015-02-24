@@ -38,7 +38,8 @@ namespace ResourceList
         {
             get { return new Version("1.0.1"); }
         }
-        public ResourceListMain(Main game)  : base(game)
+        public ResourceListMain(Main game)
+            : base(game)
         {
             Order = -1;
         }
@@ -77,13 +78,19 @@ namespace ResourceList
         {
             bool verbose = false;
             bool current = false;
+            string author = "";
+            string sortOption = "";
 
             ResourceListArguments arguments = new ResourceListArguments(args.Parameters.ToArray());
-
-            if (arguments.Contains("-current"))
+            // foreach(KeyValuePair<string, string> entry in arguments._parsedArguments)
+            //{
+            //   Console.WriteLine(entry.Key );
+            //   Console.WriteLine(entry.Value );
+            //}
+            if (arguments.Contains("-current") || arguments.Contains("-c"))
                 current = true;
- 
-            if (arguments.Contains("-verbose"))
+
+            if (arguments.Contains("-verbose") || arguments.Contains("-v"))
                 verbose = true;
             if (arguments.Contains("-help"))
             {
@@ -98,9 +105,15 @@ namespace ResourceList
             }
 
             int sortIndex = 0;
-            if (arguments.Contains("-sort"))
-                if (arguments.Sort.Length > 0)
-                    switch (arguments.Sort[0])
+            sortOption = null;
+            if (arguments.Contains("-sort") || arguments.Contains("-s"))
+            {
+                if (arguments.Contains("-sort"))
+                    sortOption = arguments.Sort;
+                else
+                    sortOption = arguments.SortShort;
+                 if (sortOption != null)
+                    switch (sortOption[0])
                     {
                         case 'a':
                             sortIndex = 1;
@@ -112,64 +125,81 @@ namespace ResourceList
                             sortIndex = 2;
                             break;
                     }
-           Resource resources = null;
-            if (arguments.Contains("-author"))
-            {
-                if(arguments.Author.Length == 0)
-                    args.Player.SendMessage("Missing Author", Color.LightSalmon);
-                    else
-                resources = ListResources("&Author=" + arguments.Author);
             }
-            else
+ 
+            author = null;
+            if (arguments.Contains("-author") || arguments.Contains("-a"))
+            {
+                if (arguments.Contains("-author"))
+                    author = arguments.Author;
+                else
+                    author = arguments.AuthorShort;
+                if (author == null)
+                {
+                    args.Player.SendMessage("Missing Author", Color.LightSalmon);
+                    return;
+                }
+            }
+ 
+            Resource resources = null;
+            if (author == null)
                 resources = ListResources("");
+            else
+                resources = ListResources("&Author=" + author);
 
-                string format = "";
-                string formatc = "";
-                switch (sortIndex)
+            if(resources.error > 0)
+            {
+                args.Player.SendMessage(String.Format("Error in request: {0}", resources.message), Color.LightSalmon);
+                return;
+            }
+
+             string format = "";
+            string formatc = "";
+            switch (sortIndex)
+            {
+                case 1:     //author
+                    resources.Resources.Sort((x, y) => string.Compare(x.AuthorUsername, y.AuthorUsername));
+                    formatc = "    {1} {0} {2} Ver:{3}";
+                    if (verbose)
+                        format = "    {1} {0} Ver:{2} DL:{3}";
+                    else
+                        format = "    {1} {0} Ver:{2}";
+                    break;
+                case 0:
+                case 2:     //title
+                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
+                    formatc = "    {0} {1} {2} Ver:{3}";
+                    if (verbose)
+                        format = "    {0} [{1}] Ver:{2} DL:{3}";
+                    else
+                        format = "    {0} {1} Ver:{2}";
+                    break;
+                default:
+                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
+                    formatc = "    {0} {1} {2} Ver:{3}";
+                    if (verbose)
+                        format = "    {0} [{1}] Ver:{2} DL:{3}";
+                    else
+                        format = "    {0} {1} Ver:{2}";
+                    break;
+            }
+
+            if (current)
+            {
+                args.Player.SendMessage(String.Format("Current Plugins ({0})", ServerApi.Plugins.Count), Color.LightSalmon);
+                for (int i = 0; i < ServerApi.Plugins.Count; i++)
                 {
-                    case 1:     //author
-                        resources.Resources.Sort((x, y) => string.Compare(x.AuthorUsername, y.AuthorUsername));
-                         formatc = "    {1} {0} {2} Ver:{3}";
-                       if (verbose)
-                            format = "    {1} {0} Ver:{2} DL:{3}";
-                        else
-                            format = "    {1} {0} Ver:{2}";
-                        break;
-                    case 0:
-                    case 2:     //title
-                        resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
-                         formatc = "    {0} {1} {2} Ver:{3}";
-                       if (verbose)
-                            format = "    {0} [{1}] Ver:{2} DL:{3}";
-                        else
-                            format = "    {0} {1} Ver:{2}";
-                        break;
-                    default:
-                        resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
-                        formatc = "    {0} {1} {2} Ver:{3}";
-                        if (verbose)
-                            format = "    {0} [{1}] Ver:{2} DL:{3}";
-                        else
-                            format = "    {0} {1} Ver:{2}";
-                        break;
+                    PluginContainer pc = ServerApi.Plugins.ElementAt(i);
+                    args.Player.SendMessage(String.Format(formatc, pc.Plugin.Name, pc.Plugin.Description, pc.Plugin.Author, pc.Plugin.Version), Color.LightSalmon);
                 }
-
-                if (current)
-                {
-                    args.Player.SendMessage(String.Format("Current Plugins ({0})", ServerApi.Plugins.Count), Color.LightSalmon);
-                    for (int i = 0; i < ServerApi.Plugins.Count; i++)
-                    {
-                        PluginContainer pc = ServerApi.Plugins.ElementAt(i);
-                         args.Player.SendMessage(String.Format(formatc, pc.Plugin.Name, pc.Plugin.Description, pc.Plugin.Author, pc.Plugin.Version), Color.LightSalmon);
-                    }
-                }
-
-                args.Player.SendMessage(String.Format("Resources Available ({0})", resources.Count), Color.LightSalmon);
-                foreach (ResourceList rl in resources.Resources)
-                {
-                    args.Player.SendMessage(String.Format(format, rl.Title, rl.AuthorUsername, rl.VersionString, rl.TimesDownloaded), Color.Black);
-                  }
-         }
+            }
+ 
+            args.Player.SendMessage(String.Format("Resources Available ({0})", resources.Count), Color.LightSalmon);
+            foreach (ResourceList rl in resources.Resources)
+            {
+                args.Player.SendMessage(String.Format(format, rl.Title, rl.AuthorUsername, rl.VersionString, rl.TimesDownloaded), Color.Black);
+            }
+        }
 
         private static string GetHTTP(string url)
         {
@@ -181,7 +211,7 @@ namespace ResourceList
                 {
                     if (resp.StatusCode != HttpStatusCode.OK)
                     {
-//                        throw new IOException("Server did not respond with an OK.");
+                        //                        throw new IOException("Server did not respond with an OK.");
                     }
 
                     using (var reader = new StreamReader(resp.GetResponseStream()))
@@ -198,9 +228,9 @@ namespace ResourceList
         private static Resource ListResources(string options)
         {
             string url = String.Format("http://tshock.co/xf/api.php?action=getresources{0}", options);
-
+ 
             string json = GetHTTP(url);
-
+ 
             var r = JsonConvert.DeserializeObject<Resource>(json);
 
             return (Resource)r;
@@ -217,29 +247,46 @@ namespace ResourceList
 
         public string Current
         {
-            get { return GetValue("current"); }
+            get { return GetValue("-current"); }
+        }
+        public string CurrentShort
+        {
+            get { return GetValue("-c"); }
         }
 
         public string Verbose
         {
-            get { return GetValue("verbose"); }
+            get { return GetValue("-verbose"); }
+        }
+        public string VerboseShort
+        {
+            get { return GetValue("-v"); }
         }
 
         public string Help
         {
-            get { return GetValue("help"); }
+            get { return GetValue("-help"); }
         }
 
         public string Sort
         {
-            get { return GetValue("sort"); }
+            get { return GetValue("-sort"); }
+        }
+        public string SortShort
+        {
+            get { return GetValue("-s"); }
         }
         public string Author
         {
-            get { return GetValue("author"); }
+            get { return GetValue("-author"); }
+        }
+        public string AuthorShort
+        {
+            get { return GetValue("-a"); }
         }
 
-        public ResourceListArguments(string[] args) : base(args)
+        public ResourceListArguments(string[] args)
+            : base(args)
         {
         }
 
@@ -256,7 +303,7 @@ namespace ResourceList
         }
     }
     #endregion
-#region Class defintion
+    #region Class defintion
     // Generated by Xamasoft JSON Class Generator
     // http://www.xamasoft.com/json-class-generator
 
@@ -345,8 +392,14 @@ namespace ResourceList
         [JsonProperty("count")]
         public int Count { get; set; }
 
+        [JsonProperty("error")]
+        public int error { get; set; }
+
+        [JsonProperty("message")]
+        public string message { get; set; }
+
         [JsonProperty("resources")]
         public List<ResourceList> Resources { get; set; }
     }
- #endregion
+    #endregion
 }

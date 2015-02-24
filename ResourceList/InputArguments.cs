@@ -10,7 +10,7 @@ namespace ResourceList
 #region fields & properties
 		public const string DEFAULT_KEY_LEADING_PATTERN = "-";
 
-		protected Dictionary<string, string> _parsedArguments   = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		public  Dictionary<string, string> _parsedArguments   = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		protected readonly string            _keyLeadingPattern;
 
 		public string this [string key]
