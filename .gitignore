@@ -41,3 +41,21 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+ResourceList/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+ResourceList/obj/Debug/ResourceList.csproj.FileListAbsolute.txt
+*.cache
+*.txt
+ResourceList/bin/Debug/Mono.Data.Sqlite.dll
+ResourceList/bin/Debug/MySql.Web.dll
+ResourceList/bin/Debug/Newtonsoft.Json.dll
+ResourceList/bin/Debug/TerrariaServer.exe
+ResourceList/bin/Debug/TShockAPI.dll
+ResourceList/bin/Debug/MySql.Data.dll
+ResourceList/DLLS/MySql.Data.dll
+ResourceList/DLLS/Newtonsoft.Json.dll
+*.exe
+ResourceList/DLLS/TShockAPI.dll
+ResourceList/DLLS/MySql.Web.dll
+ResourceList/DLLS/Mono.Data.Sqlite.dll
+ResourceList/obj/Debug/ResourceList.dll
+ResourceList/obj/Debug/ResourceList.pdb
