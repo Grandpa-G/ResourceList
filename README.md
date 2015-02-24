@@ -9,13 +9,15 @@ The file ResourceList.dll must be manually copied into the server's TShock Serve
 ####Usage#
 
 The command is invoked by /resourcelist or /rl. The options are:
-Syntax: /resourcelist [-verbose -sort {a|t} -help -author {name}]
 
-Flags:
-   -sort     Sort by a (author), t(title)
-   -author   Find resource by author
-   -verbose  Lots of information
-   -help     this information
+Syntax: /resourcelist [-verbose|-v -sort|-s {a|t} -help -author|-a {name} -current|-c]
+
+Flags:<br>
+   -author   Find resource by author<br>
+   -current  Displays plugins currently loaded<br>
+   -sort     Sort by a (author), t(title)<br>
+   -verbose  Lots of information<br>
+   -help     this information<br>
 
 The command is normally executed at the console, however, there is a permission requirement in case it needs to be accessed remotely. The permission required is:
 
