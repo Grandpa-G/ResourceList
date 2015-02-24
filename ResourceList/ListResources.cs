@@ -36,7 +36,7 @@ namespace ResourceList
         }
         public override Version Version
         {
-            get { return new Version("1.0.1"); }
+            get { return new Version("1.0.2.0"); }
         }
         public ResourceListMain(Main game)
             : base(game)
