@@ -28,7 +28,7 @@ namespace ResourceList
         }
         public override string Author
         {
-            get { return "by Granpa-G"; }
+            get { return "Granpa-G"; }
         }
         public override string Description
         {
@@ -48,11 +48,10 @@ namespace ResourceList
             //            ServerApi.Hooks.NetGetData.Register(this, GetData);
             ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
             TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnLogin;
-
+  
             Commands.ChatCommands.Add(new Command("ResourceList.allow", ResourceManager, "resourcelist"));
             Commands.ChatCommands.Add(new Command("ResourceList.allow", ResourceManager, "rl"));
-
-
+  
         }
         protected override void Dispose(bool disposing)
         {
