@@ -5,6 +5,8 @@ using System.IO;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
+using System.Reflection;
+
 using Terraria;
 using TShockAPI;
 using Mono.Data.Sqlite;
@@ -18,7 +20,7 @@ using System.Net;
 
 namespace ResourceList
 {
-    [ApiVersion(1, 16)]
+    [ApiVersion(1, 17)]
     public class ResourceListMain : TerrariaPlugin
     {
 
@@ -36,7 +38,7 @@ namespace ResourceList
         }
         public override Version Version
         {
-            get { return new Version("1.0.2.0"); }
+            get { return Assembly.GetExecutingAssembly().GetName().Version; }
         }
         public ResourceListMain(Main game)
             : base(game)
