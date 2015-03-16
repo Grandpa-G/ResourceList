@@ -59,11 +59,8 @@ namespace ResourceList
         {
             if (disposing)
             {
-                //				ServerApi.Hooks.NetGetData.Deregister(this, GetData);
                 ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
                 TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnLogin;
-                //GameHooks.Update -= OnUpdate;
-                //NetHooks.SendData -= SendData;
             }
             base.Dispose(disposing);
         }
@@ -79,26 +76,30 @@ namespace ResourceList
         {
             bool verbose = false;
             bool current = false;
+            bool resource = false;
+            bool help = false;
+
             string author = "";
             string sortOption = "";
 
             ResourceListArguments arguments = new ResourceListArguments(args.Parameters.ToArray());
-            // foreach(KeyValuePair<string, string> entry in arguments._parsedArguments)
-            //{
-            //   Console.WriteLine(entry.Key );
-            //   Console.WriteLine(entry.Value );
-            //}
-            if (arguments.Contains("-current") || arguments.Contains("-c"))
+             if (arguments.Contains("-current") || arguments.Contains("-c"))
                 current = true;
+             if (arguments.Contains("-resource") || arguments.Contains("-r"))
+                 resource = true;
 
             if (arguments.Contains("-verbose") || arguments.Contains("-v"))
                 verbose = true;
             if (arguments.Contains("-help"))
+                help = true;
+
+             if(help || !(verbose || current || resource))
             {
                 args.Player.SendMessage("Syntax: /resourcelist [-verbose -sort {a|t} -help -author {name}] ", Color.Red);
                 args.Player.SendMessage("Flags: ", Color.LightSalmon);
                 args.Player.SendMessage("   -author   Find resource by author", Color.LightSalmon);
                 args.Player.SendMessage("   -current  Display currenly loaded plugins", Color.LightSalmon);
+                args.Player.SendMessage("   -resource Display plugins from TShock Resource folder", Color.LightSalmon);
                 args.Player.SendMessage("   -sort     Sort by a (author), t(title)", Color.LightSalmon);
                 args.Player.SendMessage("   -verbose  More information", Color.LightSalmon);
                 args.Player.SendMessage("   -help     this information", Color.LightSalmon);
@@ -194,11 +195,14 @@ namespace ResourceList
                     args.Player.SendMessage(String.Format(formatc, pc.Plugin.Name, pc.Plugin.Description, pc.Plugin.Author, pc.Plugin.Version), Color.LightSalmon);
                 }
             }
- 
-            args.Player.SendMessage(String.Format("Resources Available ({0})", resources.Count), Color.LightSalmon);
-            foreach (ResourceList rl in resources.Resources)
+
+            if (resource)
             {
-                args.Player.SendMessage(String.Format(format, rl.Title, rl.AuthorUsername, rl.VersionString, rl.TimesDownloaded), Color.Black);
+                args.Player.SendMessage(String.Format("Resources Available ({0})", resources.Count), Color.LightSalmon);
+                foreach (ResourceList rl in resources.Resources)
+                {
+                    args.Player.SendMessage(String.Format(format, rl.Title, rl.AuthorUsername, rl.VersionString, rl.TimesDownloaded), Color.Black);
+                }
             }
         }
 
