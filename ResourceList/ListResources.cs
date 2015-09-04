@@ -9,8 +9,7 @@ using System.Reflection;
 
 using Terraria;
 using TShockAPI;
-using Mono.Data.Sqlite;
-using MySql.Data.MySqlClient;
+
 using Newtonsoft.Json;
 using System.Threading;
 using TerrariaApi.Server;
@@ -20,7 +19,7 @@ using System.Net;
 
 namespace ResourceList
 {
-    [ApiVersion(1, 17)]
+    [ApiVersion(1, 21)]
     public class ResourceListMain : TerrariaPlugin
     {
 
@@ -47,31 +46,18 @@ namespace ResourceList
         }
         public override void Initialize()
         {
-            //            ServerApi.Hooks.NetGetData.Register(this, GetData);
-            ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
-            TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += OnLogin;
-  
             Commands.ChatCommands.Add(new Command("ResourceList.allow", ResourceManager, "resourcelist"));
             Commands.ChatCommands.Add(new Command("ResourceList.allow", ResourceManager, "rl"));
-  
         }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
-                TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnLogin;
             }
             base.Dispose(disposing);
         }
-        private static void OnLeave(LeaveEventArgs args)
-        {
-        }
 
-        private void OnLogin(TShockAPI.Hooks.PlayerPostLoginEventArgs args)
-        {
-        }
-
+ 
         private void ResourceManager(CommandArgs args)
         {
             bool verbose = false;
@@ -95,13 +81,13 @@ namespace ResourceList
 
              if(help || !(verbose || current || resource))
             {
-                args.Player.SendMessage("Syntax: /resourcelist [-verbose -sort {a|t} -help -author {name}] ", Color.Red);
+                args.Player.SendMessage("Syntax: /resourcelist", Color.Red);
                 args.Player.SendMessage("Flags: ", Color.LightSalmon);
-                args.Player.SendMessage("   -author   Find resource by author", Color.LightSalmon);
-                args.Player.SendMessage("   -current  Display currenly loaded plugins", Color.LightSalmon);
-                args.Player.SendMessage("   -resource Display plugins from TShock Resource folder", Color.LightSalmon);
-                args.Player.SendMessage("   -sort     Sort by a (author), t(title)", Color.LightSalmon);
-                args.Player.SendMessage("   -verbose  More information", Color.LightSalmon);
+//                args.Player.SendMessage("   -author   Find resource by author", Color.LightSalmon);
+//                args.Player.SendMessage("   -current  Display currenly loaded plugins", Color.LightSalmon);
+//                args.Player.SendMessage("   -resource Display plugins from TShock Resource folder", Color.LightSalmon);
+//                args.Player.SendMessage("   -sort     Sort by a (author), t(title)", Color.LightSalmon);
+//                args.Player.SendMessage("   -verbose  More information", Color.LightSalmon);
                 args.Player.SendMessage("   -help     this information", Color.LightSalmon);
                 return;
             }
@@ -142,7 +128,7 @@ namespace ResourceList
                     return;
                 }
             }
- 
+ /*
             Resource resources = null;
             if (author == null)
                 resources = ListResources("");
@@ -154,13 +140,13 @@ namespace ResourceList
                 args.Player.SendMessage(String.Format("Error in request: {0}", resources.message), Color.LightSalmon);
                 return;
             }
-
+            */
              string format = "";
             string formatc = "";
             switch (sortIndex)
             {
                 case 1:     //author
-                    resources.Resources.Sort((x, y) => string.Compare(x.AuthorUsername, y.AuthorUsername));
+//                    resources.Resources.Sort((x, y) => string.Compare(x.AuthorUsername, y.AuthorUsername));
                     formatc = "    {1} {0} {2} Ver:{3}";
                     if (verbose)
                         format = "    {1} {0} Ver:{2} DL:{3}";
@@ -169,7 +155,7 @@ namespace ResourceList
                     break;
                 case 0:
                 case 2:     //title
-                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
+//                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
                     formatc = "    {0} {1} {2} Ver:{3}";
                     if (verbose)
                         format = "    {0} [{1}] Ver:{2} DL:{3}";
@@ -177,7 +163,7 @@ namespace ResourceList
                         format = "    {0} {1} Ver:{2}";
                     break;
                 default:
-                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
+//                    resources.Resources.Sort((x, y) => string.Compare(x.Title, y.Title));
                     formatc = "    {0} {1} {2} Ver:{3}";
                     if (verbose)
                         format = "    {0} [{1}] Ver:{2} DL:{3}";
@@ -195,7 +181,7 @@ namespace ResourceList
                     args.Player.SendMessage(String.Format(formatc, pc.Plugin.Name, pc.Plugin.Description, pc.Plugin.Author, pc.Plugin.Version), Color.LightSalmon);
                 }
             }
-
+            /*
             if (resource)
             {
                 args.Player.SendMessage(String.Format("Resources Available ({0})", resources.Count), Color.LightSalmon);
@@ -204,6 +190,7 @@ namespace ResourceList
                     args.Player.SendMessage(String.Format(format, rl.Title, rl.AuthorUsername, rl.VersionString, rl.TimesDownloaded), Color.Black);
                 }
             }
+            */
         }
 
         private static string GetHTTP(string url)
@@ -232,6 +219,7 @@ namespace ResourceList
 
         private static Resource ListResources(string options)
         {
+            return null;
             string url = String.Format("http://tshock.co/xf/api.php?action=getresources{0}", options);
  
             string json = GetHTTP(url);
